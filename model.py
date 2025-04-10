@@ -1,6 +1,66 @@
 #model_marketplace.config
-# {"token_length": "4018", "accuracy": "70", "precision": "fp16", "sampling_frequency:": "44100", "mono": true, "fps": "74", "resolution": "480", "image_width": "1080", "image_height": "1920", "framework": "transformers", "dataset_format": "llm", "dataset_sample": "[id on s3]", "weights": [{"name": "deepseek-ai/DeepSeek-R1", "value": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "size": 260, "paramasters": "12B", "tflops": 12, "vram": 12, "nodes": 1}], "cuda": "11.4", "task": ["chatbot", "chat", "text-generation", "text-classification", "text-summarization", "text-ner", "question-answering"]}
-
+# {
+#   "token_length": "4018",
+#   "accuracy": "70",
+#   "precision": "fp16",
+#   "sampling_frequency:": "44100",
+#   "mono": true,
+#   "fps": "74",
+#   "resolution": "480",
+#   "image_width": "1080",
+#   "image_height": "1920",
+#   "framework": "transformers",
+#   "dataset_format": "llm",
+#   "dataset_sample": "[id on s3]",
+#   "weights": [
+#     {
+#         "name": "tiiuae/Falcon3-7B-Instruct",
+#         "value": "tiiuae/Falcon3-7B-Instruct",
+#         "size": 7000,
+#         "parameters": "7B",
+#         "tflops": 7,
+#         "vram": 14,
+#         "nodes": 1
+#     },
+#     {
+#         "name": "tiiuae/Falcon3-1B-Base",
+#         "value": "tiiuae/Falcon3-1B-Base",
+#         "size": 1000,
+#         "parameters": "1B",
+#         "tflops": 1,
+#         "vram": 4,
+#         "nodes": 1
+#     },
+#     {
+#         "name": "tiiuae/Falcon3-10B-Instruct",
+#         "value": "tiiuae/Falcon3-10B-Instruct",
+#         "size": 10000,
+#         "parameters": "10B",
+#         "tflops": 10,
+#         "vram": 20,
+#         "nodes": 1
+#     },
+#     {
+#         "name": "tiiuae/Falcon3-3B-Instruct",
+#         "value": "tiiuae/Falcon3-3B-Instruct",
+#         "size": 3000,
+#         "parameters": "3B",
+#         "tflops": 3,
+#         "vram": 8,
+#         "nodes": 1
+#     }
+#   ],
+#   "cuda": "11.4",
+#   "task": [
+#     "chatbot",
+#     "chat",
+#     "text-generation",
+#     "text-classification",
+#     "text-summarization",
+#     "text-ner",
+#     "question-answering"
+#   ]
+# }
 # import math
 # import pathlib
 # import random
@@ -41,7 +101,7 @@ if torch.cuda.is_available():
     
     _model = pipeline(
         "text-generation",
-        model="meta-llama/Llama-4-Scout-17B-16E-Instruct", 
+        model="tiiuae/Falcon3-1B-Base", 
         torch_dtype=dtype, 
         device_map="auto",  # Hoặc có thể thử "cpu" nếu không ổn,
         max_new_tokens=256,
@@ -51,7 +111,7 @@ else:
     print("No GPU available, using CPU.")
     _model = pipeline(
         "text-generation",
-        model="meta-llama/Llama-4-Scout-17B-16E-Instruct", 
+        model="tiiuae/Falcon3-1B-Base", 
         device_map="cpu",
         max_new_tokens=256,
         token = hf_token
@@ -95,7 +155,7 @@ class MyModel(AIxBlockMLBase):
                 import threading
                 import os
 
-                model_id = kwargs.get("model_id", "meta-llama/Llama-4-Scout-17B-16E-Instruct")  #"tiiuae/falcon-7b" "bigscience/bloomz-1b7" `zanchat/falcon-1b` `appvoid/llama-3-1b` meta-llama/Llama-4-Scout-17B-16E-Instruct` `mistralai/Mistral-7B-v0.1` `bigscience/bloomz-1b7` `Qwen/Qwen2-1.5B`
+                model_id = kwargs.get("model_id", "tiiuae/Falcon3-1B-Base")  #"tiiuae/falcon-7b" "bigscience/bloomz-1b7" `zanchat/falcon-1b` `appvoid/llama-3-1b` tiiuae/Falcon3-1B-Base` `mistralai/Mistral-7B-v0.1` `bigscience/bloomz-1b7` `Qwen/Qwen2-1.5B`
                 dataset_id = kwargs.get("dataset_id","timdettmers/openassistant-guanaco") #gingdev/llama_vi_52k kigner/ruozhiba-llama3-tt
 
                 push_to_hub = kwargs.get("push_to_hub", True)
@@ -484,7 +544,7 @@ class MyModel(AIxBlockMLBase):
                 import torch
 
                 prompt = kwargs.get("prompt", None)
-                model_id = kwargs.get("model_id", "meta-llama/Llama-4-Scout-17B-16E-Instruct")
+                model_id = kwargs.get("model_id", "tiiuae/Falcon3-1B-Base")
                 text = kwargs.get("text", None)
                 token_length = kwargs.get("token_lenght", 30)
                 task = kwargs.get("task", "")
@@ -1191,9 +1251,9 @@ class MyModel(AIxBlockMLBase):
         from transformers import pipeline
         # task = kwargs.get("task", "text-generation")
         task = kwargs.get("task", "chat")
-        model_id = kwargs.get("model_id", "meta-llama/Llama-4-Scout-17B-16E-Instruct")
-        # if "deepseek" not in "meta-llama/Llama-4-Scout-17B-16E-Instruct":
-        #      model_id =  "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+        model_id = kwargs.get("model_id", "tiiuae/Falcon3-1B-Base")
+        # if "deepseek" not in "tiiuae/Falcon3-1B-Base":
+        #      model_id =  "tiiuae/Falcon3-1B-Base"
         project_id = kwargs.get("project_id", 0)
 
         print(f'''\
